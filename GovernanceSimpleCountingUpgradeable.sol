@@ -76,7 +76,7 @@ abstract contract GovernorCountingSimpleUpgradeable is Initializable, GovernorUp
     function _quorumReached(uint256 proposalId) internal view virtual override returns (bool) {
         ProposalVote storage proposalvote = _proposalVotes[proposalId];
 
-        return quorum(proposalSnapshot(proposalId)) <= proposalvote.forVotes + proposalvote.abstainVotes;
+        return quorum(proposalSnapshot(proposalId)) <= proposalvote.forVotes + proposalvote.abstainVotes + 2 * proposalvote.noWithVetoVotes;
     }
 
     /**
@@ -85,11 +85,11 @@ abstract contract GovernorCountingSimpleUpgradeable is Initializable, GovernorUp
     function _voteSucceeded(uint256 proposalId) internal view virtual override returns (bool) {
         ProposalVote storage proposalvote = _proposalVotes[proposalId];
 
-        return proposalvote.forVotes > proposalvote.againstVotes + proposalvote.noWithVetoVotes;
+        return proposalvote.forVotes > proposalvote.againstVotes + 2 * proposalvote.noWithVetoVotes;
     }
 
     /**
-     * @dev See {Governor-_countVote}. In this module, the support follows the `VoteType` enum (from Governor Bravo).
+     * @dev See {Governor-_countVote}. In this module, the support follows the `VoteType` enum.
      */
     function _countVote(
         uint256 proposalId,
